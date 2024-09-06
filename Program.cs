@@ -1,20 +1,17 @@
-namespace LoginREST
+public class Program
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddHttpContextAccessor();
+	public static void Main(string[] args)
+	{
+		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+		builder.Services.AddControllers();
+		builder.Services.AddEndpointsApiExplorer();
+		builder.Services.AddHttpContextAccessor();
+		builder.Services.AddSwaggerGen();
 
-
-            var app = builder.Build();
-
-            app.MapGet("/", () => "Hello World!");
-
-            app.Run();
-        }
-    }
+		WebApplication app = builder.Build();
+		app.UseSwagger();
+		app.UseSwaggerUI();
+		app.MapControllers();
+		app.Run();
+	}
 }
