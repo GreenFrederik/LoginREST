@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -29,6 +30,20 @@ public static class UserDatabase
 			users.Add(key, user);
 			UpdateFile();
 			return true;
+		}
+
+		return false;
+	}
+	
+	public static bool IsUserValid(UserDTO userDTO)
+	{
+		if (users.TryGetValue(userDTO.Name, out User user))
+		{
+			using (MD5 md5 = MD5.Create())
+			{
+				string hashedPassword = Convert.ToHexString(md5.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Password)));
+				return hashedPassword.Equals(user.PasswordHash);
+			}
 		}
 
 		return false;

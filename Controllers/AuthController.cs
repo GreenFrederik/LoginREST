@@ -1,12 +1,15 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using LoginREST;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-	[HttpPost]
-	[Route("create")]
+	[HttpPost("Register")]
 	public IActionResult CreateUser(UserDTO userDTO)
 	{
 		if (!UserDatabase.IsNameValid(userDTO.Name))
@@ -21,10 +24,29 @@ public class AuthController : ControllerBase
 		return Conflict("User already exists");
 	}
 	
-	[HttpPost]
-	[Route("login")]
+	[HttpPost("Login")]
 	public IActionResult Login(UserDTO user)
 	{
-		return Ok();
+		if (!UserDatabase.IsUserValid(user))
+			return BadRequest();
+
+		string token = CreateToken(user);
+		return Ok(token);
+	}
+	
+	private string CreateToken(UserDTO userDTO)
+	{
+		List<Claim> claims = new()
+		{
+			new Claim(ClaimTypes.Name, userDTO.Name),
+			new Claim(ClaimTypes.Role, "user"),
+		};
+
+		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("heElloooooooOoooooOoooooooooOoooooooooOooooooooooooooo????"));
+		var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+		var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddDays(1), signingCredentials: creds);
+
+		var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+		return jwt;
 	}
 }
