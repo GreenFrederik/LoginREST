@@ -1,7 +1,12 @@
+using LoginREST;
+using Microsoft.Data.Sqlite;
+
 public class Program
 {
 	public static void Main(string[] args)
 	{
+		UserDatabase.Initialize();
+		
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		builder.Services.AddControllers();
 		builder.Services.AddEndpointsApiExplorer();
