@@ -42,7 +42,7 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.Role, "user"),
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("heElloooooooOoooooOoooooooooOoooooooooOooooooooooooooo????"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("DANIATOKEN")));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
         var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddDays(1), signingCredentials: creds);
 
